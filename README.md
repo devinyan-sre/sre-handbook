@@ -4,6 +4,22 @@
 
 ## 📚 文档目录
 
+### 📐 架构设计(architecture/)
+
+> 围绕大型互联网 / 大型交易所 / 高并发·大流量·海量数据场景的架构梳理与组件选型。
+
+| 文档 | 说明 |
+|------|------|
+| [01-高并发架构总览](architecture/01-高并发架构总览.md) | 分层架构全景、容量估算、演进路线、异地多活 |
+| [02-大型交易所架构](architecture/02-大型交易所架构.md) | 撮合引擎、行情、清算账务、风控、冷热钱包 |
+| [03-高并发流量治理](architecture/03-高并发流量治理.md) | 限流、熔断降级、削峰、秒杀、多级缓存 |
+| [04-海量数据架构](architecture/04-海量数据架构.md) | 分库分表、NewSQL、实时数仓、数据湖 |
+| [日志方案选型](architecture/selection/日志方案选型.md) | ELK vs Loki vs ClickHouse 系 vs VictoriaLogs |
+| [监控方案选型](architecture/selection/监控方案选型.md) | Prometheus 生态、长期存储、链路追踪、告警体系 |
+| [消息队列选型](architecture/selection/消息队列选型.md) | Kafka vs RocketMQ vs Pulsar vs RabbitMQ vs NATS |
+| [数据库与缓存选型](architecture/selection/数据库与缓存选型.md) | MySQL/PG、NewSQL、Redis 及替代品 |
+| [网关与负载均衡选型](architecture/selection/网关与负载均衡选型.md) | LVS、Nginx/OpenResty、Envoy、APISIX/Kong |
+
 ### 🗄️ 数据库(database/)
 | 工具 | 说明 | 文档 |
 |------|------|------|
