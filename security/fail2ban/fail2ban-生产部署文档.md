@@ -104,60 +104,9 @@
                                               自动解封,移出 ipset
 ```
 
-下面是同一架构的 **SVG 矢量图**(在 VS Code / mkdocs / 浏览器中可直接渲染缩放):
+下面是同一架构的 **SVG 矢量图**:
 
-```svg
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" font-family="sans-serif" font-size="13">
-  <defs>
-    <marker id="arw" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L8,3 L0,6 Z" fill="#555"/>
-    </marker>
-  </defs>
-  <rect width="720" height="560" fill="#fbfbfd"/>
-
-  <!-- attackers -->
-  <rect x="130" y="20" width="460" height="50" rx="8" fill="#ffe0e0" stroke="#d33"/>
-  <text x="360" y="42" text-anchor="middle" fill="#b00" font-weight="bold">攻击者 · 1379 个 IP</text>
-  <text x="360" y="60" text-anchor="middle" fill="#900" font-size="11">62.60.130.219  45.148.10.151  13.86.104.104 ...</text>
-
-  <!-- sshd -->
-  <rect x="280" y="110" width="160" height="44" rx="8" fill="#e7eeff" stroke="#3366cc"/>
-  <text x="360" y="137" text-anchor="middle" font-weight="bold">sshd (tcp/22)</text>
-
-  <!-- journald -->
-  <rect x="270" y="190" width="180" height="44" rx="8" fill="#eef7ee" stroke="#3a3"/>
-  <text x="360" y="217" text-anchor="middle" font-weight="bold">systemd-journald</text>
-
-  <!-- fail2ban box -->
-  <rect x="120" y="270" width="480" height="180" rx="10" fill="#fff8e7" stroke="#e0a000" stroke-width="2"/>
-  <text x="360" y="292" text-anchor="middle" font-weight="bold" fill="#a06f00">fail2ban-server (backend=systemd)</text>
-
-  <rect x="150" y="310" width="150" height="46" rx="6" fill="#fff" stroke="#e0a000"/>
-  <text x="225" y="330" text-anchor="middle" font-size="12">Filter</text>
-  <text x="225" y="347" text-anchor="middle" font-size="11" fill="#666">sshd 正则匹配失败</text>
-
-  <rect x="330" y="310" width="240" height="46" rx="6" fill="#fff" stroke="#e0a000"/>
-  <text x="450" y="330" text-anchor="middle" font-size="12">计数判定</text>
-  <text x="450" y="347" text-anchor="middle" font-size="11" fill="#666">findtime 10m · maxretry 5</text>
-
-  <rect x="250" y="386" width="300" height="46" rx="6" fill="#ffeede" stroke="#e07000"/>
-  <text x="400" y="406" text-anchor="middle" font-size="12" font-weight="bold">Action: firewallcmd-multiport</text>
-  <text x="400" y="423" text-anchor="middle" font-size="11" fill="#666">超阈值 → 下发封禁</text>
-
-  <!-- firewalld -->
-  <rect x="250" y="480" width="300" height="56" rx="8" fill="#e7eeff" stroke="#3366cc"/>
-  <text x="400" y="503" text-anchor="middle" font-weight="bold">firewalld · ipset f2b-sshd</text>
-  <text x="400" y="522" text-anchor="middle" font-size="11" fill="#333">REJECT 攻击 IP · bantime 到期自动解封</text>
-
-  <!-- arrows -->
-  <line x1="360" y1="70"  x2="360" y2="108" stroke="#555" marker-end="url(#arw)"/>
-  <line x1="360" y1="154" x2="360" y2="188" stroke="#555" marker-end="url(#arw)"/>
-  <line x1="360" y1="234" x2="360" y2="268" stroke="#555" marker-end="url(#arw)"/>
-  <line x1="300" y1="333" x2="328" y2="333" stroke="#555" marker-end="url(#arw)"/>
-  <line x1="450" y1="356" x2="430" y2="384" stroke="#555" marker-end="url(#arw)"/>
-  <line x1="400" y1="432" x2="400" y2="478" stroke="#555" marker-end="url(#arw)"/>
-</svg>
-```
+![fail2ban 架构图](images/fail2ban-architecture.svg)
 
 ---
 
