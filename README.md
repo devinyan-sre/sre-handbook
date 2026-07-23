@@ -64,6 +64,7 @@
 |------|------|------|
 | Ansible | 无 Agent 批量配置管理 | [automation/ansible/](automation/ansible/) |
 | Jenkins | CI/CD 流水线 | [automation/jenkins/](automation/jenkins/) |
+| ccgram | Telegram ↔ tmux 桥接,手机远程控制 Claude Code | [automation/ccgram/ccgram部署与使用指南.md](automation/ccgram/ccgram部署与使用指南.md) |
 
 ### 🔐 安全(security/)
 | 工具 | 说明 | 文档 |
