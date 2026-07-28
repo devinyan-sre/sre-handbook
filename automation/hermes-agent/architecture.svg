@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="640" viewBox="0 0 940 640" font-family="'Segoe UI',Helvetica,Arial,sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+    <style>
+      .box{rx:10;ry:10;stroke-width:1.5;}
+      .title{font-size:15px;font-weight:700;fill:#0f172a;}
+      .sub{font-size:11.5px;fill:#334155;}
+      .tag{font-size:11px;fill:#475569;}
+      .flow{stroke:#475569;stroke-width:1.6;fill:none;marker-end:url(#arrow);}
+      .lbl{font-size:11px;fill:#64748b;}
+      .zone{fill:none;stroke-dasharray:5 4;stroke-width:1.3;}
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="640" fill="#f8fafc"/>
+  <text x="470" y="34" text-anchor="middle" font-size="20" font-weight="800" fill="#0f172a">Hermes Agent 公网部署架构 (Rocky Linux 9.7)</text>
+  <text x="470" y="55" text-anchor="middle" font-size="12" fill="#64748b">浏览器 → 防火墙 → Nginx(账号密码) → Hermes Dashboard(回环) → Agent 核心 → 模型</text>
+
+  <!-- Client -->
+  <rect class="box" x="60" y="90" width="180" height="88" fill="#eff6ff" stroke="#3b82f6"/>
+  <text class="title" x="150" y="120" text-anchor="middle">用户浏览器</text>
+  <text class="sub" x="150" y="140" text-anchor="middle">http://139.162.62.212</text>
+  <text class="tag" x="150" y="160" text-anchor="middle">输入 admin / 密码</text>
+
+  <!-- Internet cloud -->
+  <ellipse cx="150" cy="250" rx="90" ry="34" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text class="title" x="150" y="248" text-anchor="middle">公网 Internet</text>
+  <text class="tag" x="150" y="266" text-anchor="middle">全公网开放</text>
+
+  <!-- Server boundary -->
+  <rect class="zone" x="300" y="80" width="600" height="470" rx="14" stroke="#0ea5e9"/>
+  <text x="315" y="100" font-size="12" font-weight="700" fill="#0284c7">生产服务器 139.162.62.212 · 4C/8G · Rocky Linux 9.7</text>
+
+  <!-- Firewall -->
+  <rect class="box" x="330" y="120" width="150" height="80" fill="#fef2f2" stroke="#ef4444"/>
+  <text class="title" x="405" y="150" text-anchor="middle">firewalld</text>
+  <text class="sub" x="405" y="170" text-anchor="middle">放行 :80 (http)</text>
+  <text class="tag" x="405" y="188" text-anchor="middle">:22 SSH 已加固</text>
+
+  <!-- Nginx -->
+  <rect class="box" x="530" y="120" width="180" height="80" fill="#f0fdf4" stroke="#22c55e"/>
+  <text class="title" x="620" y="148" text-anchor="middle">Nginx :80</text>
+  <text class="sub" x="620" y="167" text-anchor="middle">HTTP Basic Auth</text>
+  <text class="tag" x="620" y="185" text-anchor="middle">htpasswd · WebSocket 代理</text>
+
+  <!-- fail2ban side note -->
+  <rect class="box" x="750" y="120" width="120" height="80" fill="#fffbeb" stroke="#f59e0b"/>
+  <text class="title" x="810" y="148" text-anchor="middle" font-size="13">fail2ban</text>
+  <text class="tag" x="810" y="167" text-anchor="middle">SSH 暴破防护</text>
+  <text class="tag" x="810" y="184" text-anchor="middle">(可扩展 401)</text>
+
+  <!-- Dashboard -->
+  <rect class="box" x="470" y="250" width="260" height="90" fill="#eef2ff" stroke="#6366f1"/>
+  <text class="title" x="600" y="278" text-anchor="middle">Hermes Dashboard (uvicorn)</text>
+  <text class="sub" x="600" y="298" text-anchor="middle">绑定 127.0.0.1:9119 (仅回环)</text>
+  <text class="tag" x="600" y="318" text-anchor="middle">React Web UI · Kanban · Chat · 会话/日志</text>
+
+  <!-- systemd persistence -->
+  <rect class="box" x="330" y="255" width="120" height="80" fill="#f5f3ff" stroke="#8b5cf6"/>
+  <text class="title" x="390" y="282" text-anchor="middle" font-size="13">systemd</text>
+  <text class="tag" x="390" y="300" text-anchor="middle">--user + linger</text>
+  <text class="tag" x="390" y="317" text-anchor="middle">开机自启/自愈</text>
+
+  <!-- Agent core -->
+  <rect class="box" x="440" y="385" width="320" height="100" fill="#ecfeff" stroke="#06b6d4"/>
+  <text class="title" x="600" y="412" text-anchor="middle">Hermes Agent 核心 (venv · Python 3.11)</text>
+  <text class="sub" x="600" y="432" text-anchor="middle">~/.hermes/config.yaml · .env(密钥) · kanban.db</text>
+  <text class="tag" x="600" y="452" text-anchor="middle">工具调用 · 技能 · 记忆 · 审批队列 · Cron</text>
+  <text class="tag" x="600" y="470" text-anchor="middle">网关: Telegram / Discord / Slack / 微信 ...</text>
+
+  <!-- Model providers -->
+  <rect class="box" x="330" y="510" width="540" height="70" fill="#fdf4ff" stroke="#d946ef"/>
+  <text class="title" x="600" y="537" text-anchor="middle">推理模型 Providers (出站 HTTPS)</text>
+  <text class="tag" x="600" y="557" text-anchor="middle">阿里云百炼 Bailian · OpenAI 兼容 · Anthropic · Nous Portal · 本地 Ollama ...</text>
+
+  <!-- Flows -->
+  <path class="flow" d="M150,178 L150,214"/>
+  <path class="flow" d="M240,250 L330,190 L328,175"/>
+  <text class="lbl" x="255" y="215">:80</text>
+  <path class="flow" d="M480,160 L528,160"/>
+  <path class="flow" d="M620,200 L620,248"/>
+  <text class="lbl" x="628" y="228">反代→9119</text>
+  <path class="flow" d="M450,300 L468,300"/>
+  <text class="lbl" x="452" y="292">托管</text>
+  <path class="flow" d="M600,340 L600,383"/>
+  <path class="flow" d="M600,485 L600,508"/>
+  <text class="lbl" x="608" y="500">API</text>
+
+  <text x="470" y="612" text-anchor="middle" font-size="11" fill="#94a3b8">安全模型: Hermes 仅绑回环，绝不直接暴露公网；账号密码由 Nginx 提供；密钥仅存于 ~/.hermes/.env (0600)</text>
+</svg>
