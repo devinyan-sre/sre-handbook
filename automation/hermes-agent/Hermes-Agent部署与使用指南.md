@@ -225,8 +225,10 @@ server {
         proxy_set_header   Upgrade    $http_upgrade;
         proxy_set_header   Connection $connection_upgrade;
 
-        # 关键：Host 固定为后端信任值，绕过 Hermes 的 allowed-hosts 校验（否则 400）
+        # 关键①：Host 固定为后端信任值，绕过 Hermes 的 allowed-hosts 校验（否则页面 400）
         proxy_set_header   Host              127.0.0.1:9119;
+        # 关键②：Origin 固定为回环，绕过聊天 PTY WebSocket 的 origin 校验（否则聊天 1006）
+        proxy_set_header   Origin            http://127.0.0.1:9119;
         proxy_set_header   X-Real-IP         $remote_addr;
         proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
@@ -550,6 +552,44 @@ tar czf hermes-backup-$(date +%F).tgz -C ~ .hermes/config.yaml .hermes/.env .her
 ### 坑 6：首次 `hermes dashboard` 卡在构建
 **说明**：首次需 `npm build` 构建 Web UI（`web_dist`），属正常；服务用 `--skip-build` 复用已构建产物。
 
+### 坑 7：网页能进，但**聊天框连不上，报 `Chat connection interrupted (code 1006)`**，模型状态 `closed` ⭐高频
+**现象**：普通页面正常打开，但一进"对话"就无限重连，右侧提示 `events feed disconnected`。
+**根因**：聊天走的是 **PTY WebSocket**，Hermes 对它有独立的 **Origin（来源）校验**——浏览器发来的 `Origin: http://<公网IP>` 与后端绑定的 `127.0.0.1` 不符，被拒绝。查证：
+```bash
+tail -f ~/.hermes/logs/gui.log
+# 看到： pty refused: origin_mismatch origin=http://139.162.62.212 bound=127.0.0.1
+```
+**解决**：Nginx 中增加 Origin 头改写（见 5.5 的"关键②"）：
+```nginx
+proxy_set_header Origin http://127.0.0.1:9119;
+```
+`sudo nginx -t && sudo systemctl reload nginx` 后，日志应变为 `pty accepted ... mode=loopback`，聊天即恢复。
+> 这是坑 2（Host 头 400）的 **WebSocket 版本**：Host 与 Origin **两个头都要**改写成回环值，页面和聊天才都通。
+
+### 坑 8：改了 Hermes **配置页的 `dashboard.basic_auth` 账号密码，刷新不生效** ⭐易误解
+**现象**：在 Web「配置」页填 `dashboard.basic_auth.username/password`，刷新后登录没变化。
+**根因**：Hermes 自带的 basic_auth **仅在"公网绑定"时才启用**；本架构 Dashboard 绑 `127.0.0.1`（回环），Hermes 视为可信、**不启用自带密码**。真正拦截登录的是**前面的 Nginx**。
+**解决**：登录账号密码 = 改 **Nginx htpasswd**，不是改 Hermes 配置页：
+```bash
+sudo htpasswd /etc/nginx/hermes.htpasswd <用户名>   # 改/加(交互输入密码)
+sudo htpasswd -D /etc/nginx/hermes.htpasswd <用户名> # 删除用户
+sudo cut -d: -f1 /etc/nginx/hermes.htpasswd          # 查看现有用户
+# 改完立即生效，无需 reload；浏览器有缓存,用无痕窗口重新弹框验证
+```
+配置页里那几个 basic_auth 字段在回环架构下无效，且 `password` 会明文写入 `config.yaml`，建议清空。
+
+### 坑 9：点了「更新 Hermes」/「重启网关」后，所有连接断开、聊天 1006
+**根因**：这两个按钮会 **重启后端进程**，重启的十几秒内端口 9119 中断，Nginx 报 `connect() failed (111: Connection refused)`，正在进行的 WebSocket 全部断开。
+**解决**：属正常现象，**别在聊天/使用时点**。等后端重启完成（`systemctl --user is-active hermes-dashboard` 为 active、9119 恢复监听）后，**刷新页面**即可。
+
+### 坑 10：后端已恢复，但聊天仍卡在重连
+**根因**：浏览器 URL 带 `?resume=<旧会话ID>`，在尝试恢复一个**已随重启死亡的旧 PTY 会话**。
+**解决**：访问**干净地址** `http://<IP>`（去掉 `?resume=...`），或点「新对话」，再 `Ctrl+Shift+R` 强刷。
+
+### 坑 11：网页界面切不成中文
+**根因**：在「配置」页改的 `display.language: zh` 是 **CLI/Agent 的语言**，不是网页 UI 语言。
+**解决**：点**左下角**主题名旁边的语言按钮（如 `EN`）→ 选「简体中文」。该设置存浏览器本地，换设备需重选。
+
 ---
 
 ## 13. 附录：关键文件与端口清单
@@ -580,5 +620,5 @@ tar czf hermes-backup-$(date +%F).tgz -C ~ .hermes/config.yaml .hermes/.env .her
 
 ---
 
-> **文档维护**：`automation/hermes-agent/` ｜ 架构图：`architecture.svg` ｜ 最后更新：2026-07-28
+> **文档维护**：`automation/hermes-agent/` ｜ 架构图：`architecture.svg` ｜ 最后更新：2026-07-30（新增坑 7–11：聊天 1006/Origin、认证误区、更新重启、语言切换）
 > **凭据说明**：真实账号密码**未写入本仓库**（公开仓库安全考虑），由部署者单独交付并妥善保管。
