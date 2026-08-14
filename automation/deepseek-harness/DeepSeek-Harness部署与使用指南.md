@@ -449,6 +449,11 @@ sudo htpasswd -B /etc/nginx/deepseek-harness.htpasswd dshadmin
 当前证书为带公网 IP SAN 的自签名证书，因此浏览器会显示证书不受信任。核对证书指纹
 后可临时接受，正式多人使用应替换为组织 CA 或受信任 CA 签发的证书。
 
+Harness 会把 `settings.describe`、`credentials.describe` 和配置写入等特权接口固定在
+回环同源，`--trusted-host` 不会放开它们。Nginx 因此先执行 TLS 与 Basic Auth，再拒绝
+不属于本站的浏览器 Origin，最后把已认证请求的 `Host`/`Origin` 规范化为
+`127.0.0.1:3080`。若只转发公网 Host，普通 API 会成功，但模型设置页会返回 HTTP 403。
+
 ## 11. 日常运维
 
 ### 11.1 状态与日志
