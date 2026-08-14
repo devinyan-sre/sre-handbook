@@ -1,0 +1,21 @@
+[Unit]
+Description=DeepSeek Harness Web UI (loopback only)
+Documentation=https://github.com/deepseek-ai/deepseek-harness
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/sre-handbook
+Environment=DSH_HOME=%h/.dsh
+ExecStart=%h/.local/bin/dsh web --host 127.0.0.1 --port 3080
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+KillSignal=SIGTERM
+UMask=0077
+StandardOutput=append:%h/.dsh/web.log
+StandardError=append:%h/.dsh/web.log
+
+[Install]
+WantedBy=default.target
