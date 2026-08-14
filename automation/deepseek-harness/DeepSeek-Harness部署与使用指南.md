@@ -425,6 +425,30 @@ ssh -N -L 3080:127.0.0.1:3080 devops@<服务器地址>
 
 在完成端到端鉴权测试前，不要改为 `--host 0.0.0.0`。
 
+### 10.4 本机公网入口（Nginx + HTTPS + Basic Auth）
+
+本机已经部署独立入口：
+
+```text
+https://139.162.62.212:8443
+  → Nginx TLS + Basic Auth
+  → http://127.0.0.1:3080
+  → DeepSeek Harness
+```
+
+配置模板见 [`nginx-public.conf`](./nginx-public.conf)。后端继续只监听回环地址，
+firewalld 仅对外开放 Nginx 的 `8443/tcp`。用户名为 `dshadmin`，初始随机密码保存在
+`~/.dsh/nginx-initial-password`（权限 `0600`），不会写入 Git。取得密码后应立即轮换并
+删除该明文初始密码文件：
+
+```bash
+cat "$HOME/.dsh/nginx-initial-password"
+sudo htpasswd -B /etc/nginx/deepseek-harness.htpasswd dshadmin
+```
+
+当前证书为带公网 IP SAN 的自签名证书，因此浏览器会显示证书不受信任。核对证书指纹
+后可临时接受，正式多人使用应替换为组织 CA 或受信任 CA 签发的证书。
+
 ## 11. 日常运维
 
 ### 11.1 状态与日志
