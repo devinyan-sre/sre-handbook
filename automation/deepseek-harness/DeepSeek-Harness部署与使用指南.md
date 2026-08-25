@@ -5,8 +5,8 @@
 > 工具、工作区、审批、会话持久化和插件扩展能力。
 >
 > **实测环境**：Rocky Linux 9.7 · Node.js 22.22.2 · npm 10.9.7 ·
-> `@deepseek-ai/dsh` 0.1.0-rc.6
-> **部署日期**：2026-08-14 · **状态**：✅ CLI 安装成功，✅ systemd 用户服务运行，
+> `@deepseek-ai/dsh` 0.1.1-rc.2
+> **部署日期**：2026-08-14 · **升级验证**：2026-08-25 · **状态**：✅ CLI 安装成功，✅ systemd 用户服务运行，
 > ✅ `127.0.0.1:3080` 返回 HTTP 200
 
 **⚠️ 开发者预览警告：** 上游明确提示后续会有破坏兼容性的变更。升级前务必备份
@@ -165,7 +165,7 @@ sudo dnf install -y make gcc gcc-c++
 系统级 npm 前缀通常是 `/usr/local`，普通用户不可写。使用用户级前缀可避免 `sudo npm install -g`：
 
 ```bash
-npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.0-rc.6
+npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.1-rc.2
 ```
 
 确保 `~/.local/bin` 位于 PATH。Rocky Linux 的普通用户环境通常已包含该目录；若没有，在 `~/.bashrc` 中加入：
@@ -187,8 +187,8 @@ npm list --global --prefix "$HOME/.local" --depth=0
 
 ```text
 /home/devops/.local/bin/dsh
-0.1.0-rc.6
-└── @deepseek-ai/dsh@0.1.0-rc.6
+0.1.1-rc.2
+└── @deepseek-ai/dsh@0.1.1-rc.2
 ```
 
 ### 4.4 首次启动与健康检查
@@ -197,7 +197,7 @@ npm list --global --prefix "$HOME/.local" --depth=0
 
 ```bash
 cd /home/devops/sre-handbook
-dsh web --host 127.0.0.1 --port 3080
+dsh web --no-open --host 127.0.0.1 --port 3080
 ```
 
 首次启动会在 `~/.dsh/profiles/` 初始化 `web` 和 `headless` profile。看到下面这行说明监听成功：
@@ -378,7 +378,8 @@ dsh plugin --profile web list
 | `dsh --version` | 查看版本 |
 | `dsh --help` | 查看启动器帮助 |
 | `dsh web --help` | 查看 Web profile 参数 |
-| `dsh web` | 默认在 `127.0.0.1:3080` 启动 Web UI |
+| `dsh web` | 默认在 `127.0.0.1:3080` 启动 Web UI 并尝试打开浏览器 |
+| `dsh web --no-open` | 启动 Web UI 但不打开浏览器，适用于 systemd/服务器 |
 | `dsh web --port 8080` | 使用其他端口 |
 | `dsh web --port 0` | 让操作系统分配空闲端口 |
 | `dsh --profile headless "任务"` | 无头执行一次任务后退出 |
@@ -503,7 +504,7 @@ curl --fail http://127.0.0.1:3080/ --output /dev/null
 程序回滚到本文验证版：
 
 ```bash
-npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.0-rc.6
+npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.1-rc.2
 systemctl --user restart deepseek-harness.service
 ```
 
@@ -528,7 +529,7 @@ systemctl --user daemon-reload
 **处理**：使用用户前缀，不要用 `sudo npm`：
 
 ```bash
-npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.0-rc.6
+npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.1-rc.2
 ```
 
 ### 12.2 `node-gyp` 报 `not found: make`
@@ -539,7 +540,7 @@ npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.0-rc.6
 
 ```bash
 sudo dnf install -y make gcc gcc-c++
-npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.0-rc.6
+npm install --global --prefix "$HOME/.local" @deepseek-ai/dsh@0.1.1-rc.2
 ```
 
 ### 12.3 `dsh: command not found`
@@ -571,7 +572,7 @@ systemctl --user status deepseek-harness.service --no-pager
 ```bash
 tail -n 200 "$HOME/.dsh/web.log"
 systemctl --user cat deepseek-harness.service
-/home/devops/.local/bin/dsh web --host 127.0.0.1 --port 3080
+/home/devops/.local/bin/dsh web --no-open --host 127.0.0.1 --port 3080
 ```
 
 重点检查：端口冲突、可执行文件是否存在、`WorkingDirectory` 是否正确、profile YAML 是否损坏，以及升级后的配置兼容性。
@@ -584,14 +585,14 @@ systemctl --user cat deepseek-harness.service
 
 ## 13. 验证记录
 
-以下结果来自 2026-08-14 的实际安装：
+以下结果来自 2026-08-25 的实际升级验证：
 
 | 检查项 | 命令 | 结果 |
 | --- | --- | --- |
 | CLI 路径 | `command -v dsh` | `/home/devops/.local/bin/dsh` |
-| CLI 版本 | `dsh --version` | `0.1.0-rc.6` |
-| npm 包 | `npm ls -g --prefix ~/.local` | `@deepseek-ai/dsh@0.1.0-rc.6` |
-| Web 启动 | `dsh web --host 127.0.0.1 --port 3080` | 输出访问地址，无启动错误 |
+| CLI 版本 | `dsh --version` | `0.1.1-rc.2` |
+| npm 包 | `npm ls -g --prefix ~/.local` | `@deepseek-ai/dsh@0.1.1-rc.2` |
+| Web 启动 | `dsh web --no-open --host 127.0.0.1 --port 3080` | 输出访问地址，无启动错误 |
 | HTTP | `curl http://127.0.0.1:3080/` | `HTTP/1.1 200 OK` |
 | 页面标题 | 检查返回 HTML | `DeepSeek Harness` |
 | 监听范围 | `ss -ltnp '( sport = :3080 )'` | 仅 `127.0.0.1:3080` |

@@ -24,7 +24,7 @@
 
   <rect width="1100" height="760" fill="url(#page)"/>
   <text x="550" y="38" text-anchor="middle" font-size="22" font-weight="800" fill="#0f172a">DeepSeek Harness 运行时与插件架构</text>
-  <text x="550" y="61" text-anchor="middle" font-size="12.5" fill="#64748b">已验证部署：Rocky Linux 9.7 · Node.js 22.22.2 · dsh 0.1.0-rc.6 · Web 127.0.0.1:3080</text>
+  <text x="550" y="61" text-anchor="middle" font-size="12.5" fill="#64748b">已验证部署：Rocky Linux 9.7 · Node.js 22.22.2 · dsh 0.1.1-rc.2 · Web 127.0.0.1:3080</text>
 
   <rect class="box" x="35" y="105" width="170" height="88" fill="#eff6ff" stroke="#3b82f6"/>
   <text class="title" x="120" y="136" text-anchor="middle">浏览器 Web UI</text>
