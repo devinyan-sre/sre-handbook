@@ -371,6 +371,38 @@ dsh plugin --profile web list
 
 只安装来源可信、版本明确的插件。插件可能获得与 Agent 相同的工作区、网络或进程能力；安装前应审计包内容和依赖链。
 
+### 8.4 AgentTeams 多 Agent 协作插件
+
+本机 Web profile 已固定安装 `@nanmicoder/dsh-agent-teams@0.1.13`。它让当前会话成为队长，
+可创建持久化成员、拆分带依赖的任务、在成员间发送消息，并在 Web UI 显示活动面板。
+
+`dsh plugin` 需要 `pnpm`；在用户级 npm 前缀安装后，通过 Harness 插件管理命令安装：
+
+```bash
+npm install --global --prefix "$HOME/.local" pnpm@11.23.0
+dsh plugin --profile web add @nanmicoder/dsh-agent-teams@0.1.13
+dsh --profile web --dump-config
+systemctl --user restart deepseek-harness.service
+```
+
+刷新 Web UI 后，可在输入框直接使用：
+
+```text
+/agent-teams 从安全、性能和产品角度并行审查当前工作区，输出一份汇总报告
+```
+
+团队状态默认保存在当前 workspace 的 `.agent-teams/`。该目录包含成员、任务和消息状态，
+是否提交到 Git 应按项目数据保留规则决定。卸载命令：
+
+```bash
+dsh plugin --profile web remove @nanmicoder/dsh-agent-teams
+systemctl --user restart deepseek-harness.service
+```
+
+> **兼容性记录：** AgentTeams 0.1.13 上游发布说明实测到 Harness 0.1.0-rc.8，
+> 尚未声明 0.1.1-rc.2 的 peer 范围。本机已在 Harness 0.1.1-rc.2 完成配置合成、
+> 冷启动、Host/Client 注册、公网脚本和设置 API 验收，但尚未执行真实模型的完整团队任务。
+
 ## 9. CLI 常用命令
 
 | 命令 | 用途 |
