@@ -66,6 +66,7 @@
 | Jenkins | CI/CD 流水线 | [automation/jenkins/](automation/jenkins/) |
 | ccgram | Telegram ↔ tmux 桥接,手机远程控制 Claude Code | [automation/ccgram/ccgram部署与使用指南.md](automation/ccgram/ccgram部署与使用指南.md) |
 | Hermes Agent | 开源 AI Agent 网关 + 多 Agent 看板,Nginx 反代公网访问(账号密码) | [automation/hermes-agent/Hermes-Agent部署与使用指南.md](automation/hermes-agent/Hermes-Agent部署与使用指南.md) |
+| DeepSeek Harness | DeepSeek 开源插件化智能体框架,Web UI + Profile + 工具与审批 | [automation/deepseek-harness/DeepSeek-Harness部署与使用指南.md](automation/deepseek-harness/DeepSeek-Harness部署与使用指南.md) |
 
 ### 🔐 安全(security/)
 | 工具 | 说明 | 文档 |
